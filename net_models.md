@@ -10,8 +10,17 @@
 为满足结合律，先**翻转**后“卷积”
 
 ### 2. 机器学习中的“卷积”
-相比于数学中定义的卷积操作，机器学习中的卷积省略了**翻转**这一过程
+相比于数学中定义的卷积操作，机器学习中的卷积省略了**翻转**这一过程  
+> 详见[如何理解卷积神经网络中的权值共享](https://www.zhihu.com/question/47158818/answer/670431317)  
 
+卷积神经网络两大核心思想：
+1. **网络局部连接(Local Connectivity)**  
+   对比全连接网络：不使用局部连接，即每个元素单元与隐藏层的神经元进行全连接，参数量大大增加
+2. **卷积核参数共享(Parameter Sharing)**  
+   一个$m*m$的卷积核在图像上扫描，进行特征提取，$k$个channels下参数总量为$m*m*k$  
+   对比[local conv](#localconv)：不使用参数共享，卷积核每滑动一次，卷积核中的权重参数均发生改变，参数量大大增加  
+
+<span id="localconv"> </span>
 ### 3. local卷积(local conv)
 > 参考至FaceBook的DeepFace网络([博客](https://blog.csdn.net/stdcoutzyx/article/details/46776415))
 
@@ -117,9 +126,11 @@ Depthwise convolution和标准卷积不同，对于标准卷积其卷积核是�
 - 首先采用depthwise convolution对不同输入通道分别进行卷积
 - 然后采用pointwise convolution将上面的输出再进行结合
 
-这样其实整体效果和一个标准卷积是差不多的，但是会大大减少计算量和模型参数量。  
+这样其实整体效果和一个标准卷积是差不多的，但是会大大**减少计算量和模型参数量**。  
 直观上来看，这种分解在效果上确实是等价的。比如，把上图的代号化为实际的数字，输入图片维度是11 × 11 × 3，标准卷积为3 × 3 × 3 ×16（假设stride为2，padding为1），那么可以得到输出为6 × 6 × 16的输出结果。现在输入图片不变，先通过一个维度是3 × 3 × 1 × 3的深度卷积（输入是3通道，这里有3个卷积核，对应着进行计算，理解成for循环），得到6 × 6 × 3的中间输出，然后再通过一个维度是1 × 1 × 3 ×16的1 ×1卷积，同样得到输出为6 × 6 × 16。 
 <span id="mobilenetcal"> </span>  
+> 计算量计算  
+
 这里简单分析一下depthwise separable convolution在计算量上与标准卷积的差别。假定输入特征图大小是$D_F \times D_F \times M$，而输出特征图大小是$D_F \times D_F \times N$，其中$D_F$是特征图的width和height，这是假定两者是相同的，而和指的是通道数（channels or depth）。这里也假定输入与输出特征图大小（width and height）是一致的。采用的卷积核大小是尽管是特例，但是不影响下面分析的一般性。对于标准的卷积$D_K \times D_K$，其计算量将是：  
 $$D_K \times D_K \times M \times N \times D_F \times D_F$$  
 而对于depthwise convolution其计算量为：$D_K\times D_K\times M\times D_F\times D_F$，pointwise convolution计算量是：$M\times N \times D_F\times D_F$，所以depthwise separable convolution总计算量是：  
@@ -127,6 +138,9 @@ $$D_K\times D_K\times M\times D_F\times D_F+M\times N \times D_F\times D_F$$
 可以比较depthwise separable convolution和标准卷积如下：  
 $$\frac{D_K\times D_K\times M\times D_F\times D_F+M\times N \times D_F\times D_F} {D_K \times D_K \times M \times N \times D_F \times D_F} = \frac1 N+\frac1 {D^2_K}$$  
 一般情况下$N$比较大，那么如果采用3x3卷积核的话，depthwise separable convolution相较标准卷积可以降低大约9倍的计算量。其实，后面会有对比，参数量也会减少很多。
+> 参数量计算  
+
+
 
 #### MobileNet网络结构
 前面讲述了depthwise separable convolution，这是MobileNet的基本组件，但是在真正应用中会加入batchnorm，并使用ReLU激活函数，所以depthwise separable convolution的基本结构如fig.2所示。  
@@ -134,7 +148,7 @@ $$\frac{D_K\times D_K\times M\times D_F\times D_F+M\times N \times D_F\times D_F
 fig2. 实际depthwise separable convolution结构  
 
 MobileNet的网络结构如fig3.所示。首先是一个3x3的标准卷积，然后后面就是堆积depthwise separable convolution，并且可以看到其中的部分depthwise convolution会通过strides=2进行down sampling。然后采用average pooling将feature变成1x1，根据预测类别大小加上全连接层，最后是一个softmax层。如果单独计算depthwise
-convolution和pointwise convolution，整个网络有28层（这里Avg Pool和Softmax不计算在内）。
+convolution和pointwise convolution，整个网络有28层（这里Avg Pool和Softmax不计算在内）。  
 ![](./imgs/mobilenet网络结构.jpg)  
 fig3. MobileNet网络结构  
 
