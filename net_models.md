@@ -112,6 +112,24 @@ $$y=F(x)+Wx$$
 不同层数下的ResNet结构如下图所示：
 ![ResNet结构图](./imgs/resnet结构图.png)
 
+### ResNet-V2
+![](./imgs/ResNetV2.PNG)  
+fig1. resnetV1 VS resnetV2(residual block区别)  
+weight -> $W$ -> conv2D  
+如图所示，ResNetV1与ResNetV2最大的区别在于残差块中BN/activation的位置：
+ResNet-V1：
+- conv -> BN -> activation
+
+ResNet-V2:
+- BN -> activation -> conv
+- 最后的activation在addition后面
+
+这样做的优势：
+- 模型优化更加容易  
+  相比于原始的网络结构，先激活的网络中的f是恒等变换
+- 减少网络的过拟合  
+  作者分析这可能是BN层的作用，在原始网络中，虽然残差函数的输出被归一化了，但是这个归一化的结果与残差块的输入直接相加作为下一个残差块的输入，这个输入在与权重层相乘之前并没有被归一化；而在先激活的网络中，输入与权重层相乘之前都被归一化了，所以有着更好的性能。
+
 ### MobileNet
 > 参考至小小将[GitHub](https://github.com/xiaohu2015/DeepLearning_tutorials), [知乎](https://zhuanlan.zhihu.com/p/31551004)
 
