@@ -189,7 +189,7 @@ MobileNet网络是Google提出主要应用在移动端的轻量级CNN网络。�
 Xception已经实验证明了Depthwise卷积后再加ReLU效果会变差，作者猜想可能是Depthwise输出太浅了应用ReLU会带来信息丢失，而MobileNet还引用了Xception的论文，但是在Depthwise卷积后面还是加了ReLU。在MobileNet v2这个ReLU终于去掉了（非紧邻，最后的ReLU），并用了大量的篇幅来说明为什么要去掉（各种很复杂的证明，你不会想自己推一遍的= =，从理论上说明了去掉ReLU的合理性）。
 
 #### 对比MobileNet v1与v2的微结构
-![](./imgs/mobilenetv2_1.svg)  
+![](./imgs/mobilenetv2_0.png)  
 > 相同点  
 
 - 都采用**Depth-wise($DW$)**卷积搭配**Point-wise($PW$)**卷积的方式来提特征。这两个操作合起来也被称为 Depth-wise Separable Convolution，之前在 Xception 中被广泛使用。这么做的好处是理论上可以成倍的减少卷积层的时间复杂度和空间复杂度。由下式可知，因为卷积核的尺寸$D_K$通常远小于输出通道数$N$，因此标准卷积的计算复杂度近似为$DW+PW$组合卷积的$D_K^2$倍([证明](#mobilenetcal))。  
