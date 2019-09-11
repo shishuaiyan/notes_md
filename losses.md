@@ -198,7 +198,13 @@ keras.losses.mean_absolute_error(y_true, y_pred)
 
 ### Huber loss和smooth L1
 Huber loss具备了MAE和MSE各自的优点，当δ趋向于0时它就退化成了MAE,而当δ趋向于无穷时则退化为了MSE。  
-$$huber\_loss_\delta(y,\hat y)=$$
+$$
+huber\_loss_\delta(y,\hat y)=
+\left\{\begin{matrix}
+\frac 1 2\sum^n_{i=1}(y_i-\hat y_i)&,|y_i-\hat y_i|\leq \delta\\
+\delta \times \sum^n_{i=1}|y_i-\hat y_i|-\frac 1 2\delta^2&,otherwise
+\end{matrix}\right.
+$$
 
-
-## reference：[损失函数loss大大总结](https://blog.csdn.net/qq_14845119/article/details/80787753)
+## reference：
+- [损失函数loss大大总结](https://blog.csdn.net/qq_14845119/article/details/80787753)
