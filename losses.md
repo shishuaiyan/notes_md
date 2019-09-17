@@ -31,6 +31,9 @@ keras接口：
 keras.losses.binary_crossentropy(y_true, y_pred)
 ```
 
+## 有问题，待修改。。。。。。
+m个数据，n分类
+$$L(y,\hat y)=-\frac 1 m \sum_{j=1}^m\hat y_j \times log(\frac {e^{y_{y_i}}} {\sum_{i=1}^ne^{y_i}})$$
 ### 多分类交叉熵损失 softmax_cross_entropy
 $$softmax(y_i)=\frac {e^{y_i}} {\sum_{i=1}^ne^{y_i}}$$
 $$L(y,\hat y)=-\frac 1 n \sum_{i=1}^n\hat y_i \times log(softmax(y_i))$$
