@@ -71,7 +71,7 @@
 
 **好处**：
 - 同样可有效降低参数量(e.g 卷积权重参数$k*k*Ci*Co->k*k*Ci*Co/g$ 分成g组)
-- [可在通道维度学习block-diagonal结构的稀疏性，使得网络中高相关的滤波器能够以一种更加结构化的方式被学习到，不容易过拟合，起到类似正则化的效果](https://blog.yani.io/filter-group-tutorial/)
+- 可在通道维度学习block-diagonal结构的稀疏性，使得网络中高相关的滤波器能够以一种更加结构化的方式被学习到，不容易过拟合，起到类似正则化的效果([链接](https://blog.yani.io/filter-group-tutorial/))
 
 **应用**：
 - 待补充
@@ -114,15 +114,15 @@ $$y=F(x)+Wx$$
 
 ### ResNet-V2
 ![](./imgs/ResNetV2.PNG)  
-fig1. resnetV1 VS resnetV2(residual block区别)  
+fig1. resnetV1（左） VS resnetV2（右）(residual block区别)  
 weight -> $W$ -> conv2D  
 如图所示，ResNetV1与ResNetV2最大的区别在于残差块中BN/activation的位置：
 ResNet-V1：
 - conv -> BN -> activation
+- 最后的activation在addition后面
 
 ResNet-V2:
 - BN -> activation -> conv
-- 最后的activation在addition后面
 
 这样做的优势：
 - 模型优化更加容易  
