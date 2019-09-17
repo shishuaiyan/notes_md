@@ -6,7 +6,7 @@
 - $y_i:$ 多分类任务中第$i$类的预测值
 ### 二分类交叉熵损失 sigmoid_cross_entropy
 $$ sigmoid(y)=\frac1 {1+e^{-y}}$$
-$$ L(y,\hat{y})=-\frac 1 2 \times (\hat y \times log(sigmoid(y))+(1-\hat y)\times log(1-sigmoid(y)))$$
+$$ L(y,\hat{y})=-\frac 1 2 \times (\hat y \times \log(sigmoid(y))+(1-\hat y)\times \log(1-sigmoid(y)))$$
 TF接口：
 ```python
 tf.losses.sigmoid_cross_entropy(
@@ -31,12 +31,21 @@ keras接口：
 keras.losses.binary_crossentropy(y_true, y_pred)
 ```
 
-## 有问题，待修改。。。。。。
-m个数据，n分类
-$$L(y,\hat y)=-\frac 1 m \sum_{j=1}^m\hat y_j \times log(\frac {e^{y_{y_i}}} {\sum_{i=1}^ne^{y_i}})$$
 ### 多分类交叉熵损失 softmax_cross_entropy
-$$softmax(y_i)=\frac {e^{y_i}} {\sum_{i=1}^ne^{y_i}}$$
-$$L(y,\hat y)=-\frac 1 n \sum_{i=1}^n\hat y_i \times log(softmax(y_i))$$
+> m个数据，n分类。有
+$$\hat y_i=
+\left\{\begin{matrix}
+ 0& ,正确分类\\ 
+ 1& ,错误分类
+\end{matrix}\right.
+$$
+$$softmax(y_i)=\frac {e^{y_i}} {\sum_{j=1}^ne^{y_j}}$$
+$$\begin{aligned}
+L(y,\hat y)
+&=-\frac 1 m \sum_{i=1}^m\hat y_i \times log(softmax(y_i))\\
+&= -\frac{1}{m}\sum_{i=1}^m\hat y_i \times\log\frac{e^{W_{y_i}^Tx_i+b_{y_i}}}{\sum_{j=1}^ne^{W_j^Tx_i+b_j}}\\
+&= -\frac{1}{m}\sum_{i=1}^m\log\frac{e^{W_{y_i}^Tx_i+b_{y_i}}}{\sum_{j=1}^ne^{W_j^Tx_i+b_j}}
+\end{aligned}$$
 TF接口：
 ```python
 tf.losses.softmax_cross_entropy(
@@ -72,8 +81,9 @@ keras.losses.sparse_categorical_crossentropy(y_true, y_pred)
 
 ### focal loss
 由何凯明提出[(论文)](https://arxiv.org/pdf/1708.02002.pdf)，主要用于解决多分类任务中样本不平衡的现象，可以获得比softmax_cross_entropy更好的分类效果。
-$$softmax(y_i)=\frac {e^{y_i}} {\sum_{i=1}^ne^{y_i}}$$
-$$L_{focal\_loss}(y,\hat y)=-\frac 1 n \sum_{i=1}^n\hat y \times \alpha_i \times (1-softmax(y_i))^\gamma \times log(softmax(y_i))$$
+> m个数据，n分类。  
+$$softmax(y_i)=\frac {e^{y_i}} {\sum_{j=1}^ne^{y_j}}$$
+$$L_{focal\_loss}(y,\hat y)=-\frac 1 m \sum_{i=1}^m\hat y \times \alpha_i \times (1-softmax(y_i))^\gamma \times log(softmax(y_i))$$
 论文中$\alpha=0.25$, $\gamma=2$效果最好
 
 
